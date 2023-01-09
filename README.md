@@ -1,4 +1,4 @@
-# flask-docker-celery-rabbitmq
+# flask-docker-celery-rabbitmq-nginx-gunicorn
 
 This repository is for running a simple dummy flask application in a docker environment.
 
@@ -8,6 +8,8 @@ It uses:
 - Flower
 - Rabbitmq
 - PostgreSQL (not doing anything, though)
+- Nginx
+- Gunicorn
 
 
 ## Prerequisites
@@ -29,7 +31,7 @@ When it runs, you can test it with several curl posts request and check it runni
         curl --data '{json}' -H 'Content-Type: application/json' 0.0.0.0:8888/api/process_data
     done
 
-This will run 50 tasks, you can see in the flower [http://localhost:5556](http://0.0.0.0:5556/)
+This will run 50 tasks, you can see in the flower [http://localhost:5555](http://0.0.0.0:5555/)
 how the tasks are distributed between the worker instances.
 
 You can also check the status of a specific task in flask:
