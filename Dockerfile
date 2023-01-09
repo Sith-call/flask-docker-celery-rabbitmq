@@ -13,4 +13,4 @@ RUN pip install gunicorn[gevent]
 
 EXPOSE 8888
 
-CMD python app.py
+# CMD python app.py

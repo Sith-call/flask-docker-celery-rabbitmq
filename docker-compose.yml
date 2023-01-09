@@ -7,13 +7,18 @@ services:
    environment:
      - RABBITMQ_DEFAULT_USER=rabbit_user
      - RABBITMQ_DEFAULT_PASS=rabbit_password
+   networks:
+     - techeer
  db-postgres:
    image: "postgres:11.2"
    environment:
      - POSTGRES_USER=db_user
      - POSTGRES_PASSWORD=db_password
+   networks:
+     - techeer
  api:
    build: .
+   command: gunicorn --workers=10 --bind 0.0.0.0:8888 wsgi:app
    ports:
     - "8888:8888"
    environment:
@@ -23,6 +28,8 @@ services:
      - db-postgres
    volumes:
      - .:/flask-deploy
+   networks:
+     - techeer
  api-worker01:
    build: .
    command: watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- celery -A tasks.celery worker --loglevel=info
@@ -33,6 +40,8 @@ services:
      - db-postgres
    volumes:
      - .:/flask-deploy
+   networks:
+     - techeer
  api-worker02:
    build: .
    command: watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- celery -A tasks.celery worker --loglevel=info
@@ -43,6 +52,8 @@ services:
      - db-postgres
    volumes:
      - .:/flask-deploy
+   networks:
+     - techeer
  api-beat:
    build: .
    command: celery -A tasks.celery beat --loglevel=info
@@ -51,6 +62,8 @@ services:
    depends_on:
      - broker-rabbitmq
      - db-postgres
+   networks:
+     - techeer
  celery-flower:
    image: gregsi/latest-celery-flower-docker:latest
    environment:
@@ -67,3 +80,19 @@ services:
      - "5556:5555"
    depends_on:
      - broker-rabbitmq
+   networks:
+     - techeer
+ nginx:
+   build: ./nginx
+   ports:
+     - 1337:80
+   volumes:
+     - ./build:/build/
+   depends_on:
+     - api
+   networks:
+     - techeer
+
+networks:
+ techeer:
+   driver: bridge
