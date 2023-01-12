@@ -51,6 +51,11 @@ class DataProcessingAPI(Resource):
         LOGGER.info("Task: %s", task)
 
         return {'task_id': task.id}, 200
+    
+        ## if you want make process synchronous on purpose, run this code ##
+        # while(not task.ready()):
+        #     pass
+        # return {'task_result' : task.get()}
 
 
 class GroupDataProcessingAPI(Resource):
